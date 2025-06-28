@@ -1,6 +1,5 @@
-@startuml 画面遷移図
+@startuml state
 
-' スタイル設定
 skinparam backgroundColor white
 skinparam titleFontSize 18
 skinparam titleFontColor black
@@ -13,82 +12,28 @@ skinparam activityFontSize 14
 
 title スケジュール明るさアプリ - 画面遷移図
 
-' 画面の定義
-(*) --> "アプリ起動" #DDDDDD
-"アプリ起動" --> "ホーム画面\n(スケジュール一覧)"
+[*] --> アプリ起動
+アプリ起動 --> ホーム画面 : 起動完了
 
-' ホーム画面からの遷移
-state "ホーム画面\n(スケジュール一覧)" as HomeScreen {
-  state "明るさ状態表示" as BrightnessStatus
-  state "スケジュール一覧" as ScheduleList
-  state "スケジュール追加ボタン" as AddButton
-  state "設定ボタン" as SettingsButton
-  
-  [*] --> BrightnessStatus
-  BrightnessStatus --> ScheduleList
-  ScheduleList --> AddButton
-  AddButton --> SettingsButton
+state ホーム画面 {
+  [*] --> スケジュール一覧
+  スケジュール一覧 --> 明るさ状態表示
 }
 
-' スケジュール編集画面
-state "スケジュール編集画面" as EditScreen {
-  state "時刻選択" as TimePicker
-  state "明るさモード選択\n(自動/手動)" as ModeSelection
-  state "明るさスライダー\n(手動モード時)" as BrightnessSlider
-  state "有効/無効スイッチ" as EnabledSwitch
-  state "保存/キャンセルボタン" as SaveCancelButtons
-  
-  [*] --> TimePicker
-  TimePicker --> ModeSelection
-  ModeSelection --> BrightnessSlider
-  BrightnessSlider --> EnabledSwitch
-  EnabledSwitch --> SaveCancelButtons
-}
+ホーム画面 --> スケジュール編集画面 : 追加/編集
+ホーム画面 --> 削除確認ダイアログ : 削除
+ホーム画面 --> 設定画面 : 設定
 
-' 設定画面
-state "設定画面" as SettingsScreen {
-  state "システム設定権限状態" as PermissionStatus
-  state "自動明るさモード切替" as AutoBrightnessToggle
-  state "黒オーバーレイモード切替" as OverlayModeToggle
-  state "アプリ情報表示" as AppInfo
-  
-  [*] --> PermissionStatus
-  PermissionStatus --> AutoBrightnessToggle
-  AutoBrightnessToggle --> OverlayModeToggle
-  OverlayModeToggle --> AppInfo
-}
+スケジュール編集画面 --> ホーム画面 : 保存/キャンセル
+削除確認ダイアログ --> ホーム画面 : 削除/キャンセル
+設定画面 --> システム設定画面 : 権限がない場合
+設定画面 --> ホーム画面 : 戻る
+システム設定画面 --> 設定画面 : 権限設定後に戻る
 
-' 削除確認ダイアログ
-state "削除確認ダイアログ" as DeleteDialog {
-  state "削除/キャンセルボタン" as DeleteButtons
-  [*] --> DeleteButtons
-}
-
-' システム設定画面（外部）
-state "システム設定画面\n(WRITE_SETTINGS権限)" as SystemSettings #DDFFDD
-
-' 画面間の遷移
-HomeScreen --> EditScreen : スケジュール追加ボタンをタップ
-HomeScreen --> EditScreen : スケジュールの編集ボタンをタップ
-HomeScreen --> DeleteDialog : スケジュールの削除ボタンをタップ
-HomeScreen --> SettingsScreen : 設定ボタンをタップ
-
-EditScreen --> HomeScreen : 保存ボタンをタップ\n(スケジュールが保存される)
-EditScreen --> HomeScreen : キャンセルボタンをタップ\n(変更が破棄される)
-
-DeleteDialog --> HomeScreen : 削除ボタンをタップ\n(スケジュールが削除される)
-DeleteDialog --> HomeScreen : キャンセルボタンをタップ
-
-SettingsScreen --> SystemSettings : 「許可する」ボタンをタップ\n(権限がない場合のみ表示)
-SettingsScreen --> HomeScreen : 戻るボタンをタップ
-SystemSettings --> SettingsScreen : 権限設定後に戻る
-
-' 特殊な遷移（アラーム発火時）
-note right of HomeScreen
+note right of ホーム画面
   指定時刻になると
   バックグラウンドで
   明るさが変更される
-  (ユーザー操作なし)
 end note
 
 @enduml
