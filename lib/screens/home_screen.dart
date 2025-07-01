@@ -69,31 +69,6 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             
-            // 明るさモード表示
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    settingsProvider.isAutoModeEnabled ? '自動明るさモード' : '手動明るさモード',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    settingsProvider.isAutoModeEnabled
-                        ? '明るさは周囲の環境に応じて自動調整されます'
-                        : 'スケジュールに従って明るさが変更されます',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
             // 権限がない場合の警告アイコン
             if (!settingsProvider.hasWriteSettingsPermission)
               Tooltip(
