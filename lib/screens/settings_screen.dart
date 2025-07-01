@@ -50,11 +50,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               
               const Divider(),
               
-              // 明るさ設定セクション
-              _buildBrightnessSettingsSection(settingsProvider),
-              
-              const Divider(),
-              
               // その他の設定セクション
               _buildOtherSettingsSection(settingsProvider),
               
@@ -104,37 +99,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
               child: const Text('許可する'),
             ),
-    );
-  }
-
-  // 明るさ設定セクションを構築
-  Widget _buildBrightnessSettingsSection(SettingsProvider settingsProvider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
-          child: Text(
-            '明るさ設定',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-        ),
-        SwitchListTile(
-          title: const Text('自動明るさモード'),
-          subtitle: const Text('周囲の環境に応じて明るさを自動調整します'),
-          value: settingsProvider.isAutoModeEnabled,
-          onChanged: settingsProvider.hasWriteSettingsPermission
-              ? (value) async {
-                  await settingsProvider.toggleAutoMode();
-                }
-              : null,
-          secondary: const Icon(Icons.brightness_auto),
-        ),
-      ],
     );
   }
 
