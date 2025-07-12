@@ -8,12 +8,20 @@ class AppSettings {
   
   // WRITE_SETTINGS権限が許可されているかどうか
   bool hasWriteSettingsPermission;
+  
+  // オーバーレイの不透明度（0.0～1.0、0%～100%に対応）
+  double overlayOpacity;
+  
+  // オーバーレイが現在アクティブかどうか
+  bool isOverlayActive;
 
   // コンストラクタ
   AppSettings({
     this.isAutoModeEnabled = false,
     this.useOverlayMode = false,
     this.hasWriteSettingsPermission = false,
+    this.overlayOpacity = 0.5,
+    this.isOverlayActive = false,
   });
 
   // JSONからオブジェクトを生成するファクトリコンストラクタ
@@ -22,6 +30,8 @@ class AppSettings {
       isAutoModeEnabled: json['isAutoModeEnabled'] ?? false,
       useOverlayMode: json['useOverlayMode'] ?? false,
       hasWriteSettingsPermission: json['hasWriteSettingsPermission'] ?? false,
+      overlayOpacity: json['overlayOpacity'] ?? 0.5,
+      isOverlayActive: json['isOverlayActive'] ?? false,
     );
   }
 
@@ -31,6 +41,8 @@ class AppSettings {
       'isAutoModeEnabled': isAutoModeEnabled,
       'useOverlayMode': useOverlayMode,
       'hasWriteSettingsPermission': hasWriteSettingsPermission,
+      'overlayOpacity': overlayOpacity,
+      'isOverlayActive': isOverlayActive,
     };
   }
 
@@ -39,11 +51,15 @@ class AppSettings {
     bool? isAutoModeEnabled,
     bool? useOverlayMode,
     bool? hasWriteSettingsPermission,
+    double? overlayOpacity,
+    bool? isOverlayActive,
   }) {
     return AppSettings(
       isAutoModeEnabled: isAutoModeEnabled ?? this.isAutoModeEnabled,
       useOverlayMode: useOverlayMode ?? this.useOverlayMode,
       hasWriteSettingsPermission: hasWriteSettingsPermission ?? this.hasWriteSettingsPermission,
+      overlayOpacity: overlayOpacity ?? this.overlayOpacity,
+      isOverlayActive: isOverlayActive ?? this.isOverlayActive,
     );
   }
 }

@@ -102,4 +102,29 @@ class BrightnessService {
       return false;
     }
   }
+
+  // オーバーレイの不透明度を設定するメソッド（リアルタイム調整用）
+  Future<bool> setOverlayOpacity(double opacity) async {
+    try {
+      final result = await platform.invokeMethod<bool>(
+        'setOverlayOpacity',
+        {'opacity': opacity},
+      );
+      return result ?? false;
+    } catch (e) {
+      print('オーバーレイ不透明度設定エラー: $e');
+      return false;
+    }
+  }
+
+  // オーバーレイが現在表示されているかどうかを確認するメソッド
+  Future<bool> isOverlayVisible() async {
+    try {
+      final result = await platform.invokeMethod<bool>('isOverlayVisible');
+      return result ?? false;
+    } catch (e) {
+      print('オーバーレイ状態確認エラー: $e');
+      return false;
+    }
+  }
 }

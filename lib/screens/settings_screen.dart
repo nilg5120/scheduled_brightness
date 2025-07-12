@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
+import '../widgets/overlay_opacity_slider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 // 設定画面
@@ -52,6 +53,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               
               // その他の設定セクション
               _buildOtherSettingsSection(settingsProvider),
+              
+              const Divider(),
+              
+              // オーバーレイ制御セクション
+              _buildOverlayControlSection(settingsProvider),
               
               const Divider(),
               
@@ -127,6 +133,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
           },
           secondary: const Icon(Icons.layers),
         ),
+      ],
+    );
+  }
+
+  // オーバーレイ制御セクションを構築
+  Widget _buildOverlayControlSection(SettingsProvider settingsProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+          child: Text(
+            'オーバーレイ制御',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        
+        // オーバーレイON/OFFスイッチ
+        SwitchListTile(
+          title: const Text('オーバーレイを表示'),
+          subtitle: Text(
+            settingsProvider.isOverlayActive
+                ? 'オーバーレイが表示されています'
+                : 'オーバーレイは非表示です',
+          ),
+          value: settingsProvider.isOverlayActive,
+          onChanged: (value) async {
+            final success = await settingsProvider.toggleOverlay();
+            if (!success && mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('オーバーレイの切り替えに失敗しました'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          secondary: Icon(
+            settingsProvider.isOverlayActive ? Icons.visibility : Icons.visibility_off,
+          ),
+        ),
+        
+        // 不透明度調整スライダー
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: OverlayOpacitySlider(
+            value: settingsProvider.overlayOpacity,
+            onChanged: (value) async {
+              await settingsProvider.setOverlayOpacity(value);
+            },
+            enabled: true,
+          ),
+        ),
+        
+        // 説明テキスト
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Card(
+            color: Colors.blue.shade50,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.blue.shade700,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'オーバーレイ機能を使用すると、通常の明度調整の限界を超えて画面をより暗くできます。',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        
+        const SizedBox(height: 16),
       ],
     );
   }

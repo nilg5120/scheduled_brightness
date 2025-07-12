@@ -57,27 +57,114 @@ class HomeScreen extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
+        child: Column(
           children: [
-            // 明るさアイコン
-            Icon(
-              settingsProvider.isAutoModeEnabled
-                  ? Icons.brightness_auto
-                  : Icons.brightness_6,
-              size: 24,
-              color: Theme.of(context).primaryColor,
+            // 上段：明るさ状態とオーバーレイ状態
+            Row(
+              children: [
+                // 明るさアイコン
+                Icon(
+                  settingsProvider.isAutoModeEnabled
+                      ? Icons.brightness_auto
+                      : Icons.brightness_6,
+                  size: 24,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 12),
+                
+                // 明るさモード表示
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        settingsProvider.isAutoModeEnabled ? '自動明るさ' : '手動明るさ',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (settingsProvider.isOverlayActive)
+                        Text(
+                          'オーバーレイ: ${(settingsProvider.overlayOpacity * 100).round()}%',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                
+                // オーバーレイ切り替えボタン
+                IconButton(
+                  onPressed: () async {
+                    final success = await settingsProvider.toggleOverlay();
+                    if (!success && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('オーバーレイの切り替えに失敗しました'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    settingsProvider.isOverlayActive 
+                        ? Icons.layers 
+                        : Icons.layers_outlined,
+                    color: settingsProvider.isOverlayActive 
+                        ? Theme.of(context).primaryColor 
+                        : Colors.grey,
+                  ),
+                  tooltip: settingsProvider.isOverlayActive 
+                      ? 'オーバーレイを非表示' 
+                      : 'オーバーレイを表示',
+                ),
+                
+                // 権限がない場合の警告アイコン
+                if (!settingsProvider.hasWriteSettingsPermission)
+                  Tooltip(
+                    message: '権限が必要です。設定画面で許可してください。',
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.amber[700],
+                    ),
+                  ),
+              ],
             ),
-            const SizedBox(width: 16),
             
-            // 権限がない場合の警告アイコン
-            if (!settingsProvider.hasWriteSettingsPermission)
-              Tooltip(
-                message: '権限が必要です。設定画面で許可してください。',
-                child: Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.amber[700],
+            // オーバーレイがアクティブな場合の詳細情報
+            if (settingsProvider.isOverlayActive) ...[
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 16,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '画面に黒いオーバーレイが適用されています',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ],
           ],
         ),
       ),

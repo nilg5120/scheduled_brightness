@@ -53,6 +53,13 @@ class MainActivity : FlutterActivity() {
                 "hideOverlay" -> {
                     result.success(hideOverlay())
                 }
+                "setOverlayOpacity" -> {
+                    val opacity = call.argument<Double>("opacity") ?: 0.5
+                    result.success(setOverlayOpacity(opacity.toFloat()))
+                }
+                "isOverlayVisible" -> {
+                    result.success(isOverlayVisible())
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -219,6 +226,30 @@ class MainActivity : FlutterActivity() {
             e.printStackTrace()
             false
         }
+    }
+
+    // オーバーレイの不透明度を設定するメソッド（リアルタイム調整用）
+    private fun setOverlayOpacity(opacity: Float): Boolean {
+        return try {
+            if (isOverlayShowing && overlayView != null) {
+                // 既存のオーバーレイの背景色を更新
+                overlayView?.setBackgroundColor(
+                    (opacity * 255).toInt() shl 24
+                )
+                true
+            } else {
+                // オーバーレイが表示されていない場合は新しく表示
+                showOverlay(opacity)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    // オーバーレイが現在表示されているかどうかを確認するメソッド
+    private fun isOverlayVisible(): Boolean {
+        return isOverlayShowing && overlayView != null
     }
 
     override fun onDestroy() {
