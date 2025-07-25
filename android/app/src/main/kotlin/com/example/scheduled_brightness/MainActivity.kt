@@ -10,6 +10,7 @@ import android.graphics.PixelFormat
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import android.util.Log
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -173,6 +174,14 @@ class MainActivity : FlutterActivity() {
 
     // 黒オーバーレイを表示するメソッド
     private fun showOverlay(opacity: Float): Boolean {
+        Log.d("MainActivity", "showOverlay called with opacity: $opacity")
+        
+        // SYSTEM_ALERT_WINDOW権限をチェック
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Log.e("MainActivity", "SYSTEM_ALERT_WINDOW permission not granted")
+            return false
+        }
+        
         if (overlayView != null) {
             hideOverlay()
         }
@@ -199,7 +208,7 @@ class MainActivity : FlutterActivity() {
             // 黒い半透明のViewを作成
             overlayView = FrameLayout(this)
             overlayView?.setBackgroundColor(
-                (opacity * 255).toInt() shl 24
+                ((opacity * 255).toInt() shl 24) or 0x000000 // アルファ値 + 黒色(RGB: 0,0,0)
             )
             
             // オーバーレイを表示
@@ -231,17 +240,23 @@ class MainActivity : FlutterActivity() {
     // オーバーレイの不透明度を設定するメソッド（リアルタイム調整用）
     private fun setOverlayOpacity(opacity: Float): Boolean {
         return try {
+            Log.d("MainActivity", "setOverlayOpacity called with opacity: $opacity")
+            Log.d("MainActivity", "isOverlayShowing: $isOverlayShowing, overlayView: $overlayView")
+            
             if (isOverlayShowing && overlayView != null) {
                 // 既存のオーバーレイの背景色を更新
-                overlayView?.setBackgroundColor(
-                    (opacity * 255).toInt() shl 24
-                )
+                val color = ((opacity * 255).toInt() shl 24) or 0x000000 // アルファ値 + 黒色(RGB: 0,0,0)
+                Log.d("MainActivity", "Setting background color to: ${String.format("0x%08X", color)}")
+                overlayView?.setBackgroundColor(color)
+                Log.d("MainActivity", "Background color updated successfully")
                 true
             } else {
                 // オーバーレイが表示されていない場合は新しく表示
+                Log.d("MainActivity", "Overlay not showing, calling showOverlay")
                 showOverlay(opacity)
             }
         } catch (e: Exception) {
+            Log.e("MainActivity", "Error in setOverlayOpacity", e)
             e.printStackTrace()
             false
         }

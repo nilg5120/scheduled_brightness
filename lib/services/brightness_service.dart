@@ -106,10 +106,12 @@ class BrightnessService {
   // オーバーレイの不透明度を設定するメソッド（リアルタイム調整用）
   Future<bool> setOverlayOpacity(double opacity) async {
     try {
+      print('BrightnessService: setOverlayOpacity called with opacity: $opacity');
       final result = await platform.invokeMethod<bool>(
         'setOverlayOpacity',
         {'opacity': opacity},
       );
+      print('BrightnessService: setOverlayOpacity result: $result');
       return result ?? false;
     } catch (e) {
       print('オーバーレイ不透明度設定エラー: $e');
