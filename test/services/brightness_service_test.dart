@@ -14,7 +14,7 @@ void main() {
       brightnessService = BrightnessService();
       methodCalls = [];
       
-      // MethodChannelをモック
+      // BrightnessServiceのMethodChannelをモック
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
         const MethodChannel('com.example.scheduled_brightness/brightness'),
@@ -41,12 +41,34 @@ void main() {
           }
         },
       );
+      
+      // permission_handlerのMethodChannelもモック
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('flutter.baseflow.com/permissions/methods'),
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'checkPermissionStatus':
+              return 0; // PermissionStatus.denied（systemAlertWindowがdeniedの場合）
+            case 'requestPermissions':
+              return {0: 1}; // Permission.systemAlertWindow: PermissionStatus.granted
+            default:
+              return null;
+          }
+        },
+      );
     });
 
     tearDown(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
         const MethodChannel('com.example.scheduled_brightness/brightness'),
+        null,
+      );
+      
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('flutter.baseflow.com/permissions/methods'),
         null,
       );
     });
@@ -175,11 +197,13 @@ void main() {
 
     group('権限チェック', () {
       test('hasWriteSettingsPermissionが正しくMethodChannelを呼び出す', () async {
+        // Permission.systemAlertWindow.statusがgrantedでない場合のテスト
         final result = await brightnessService.hasWriteSettingsPermission();
         
         expect(result, true);
-        expect(methodCalls.length, 1);
-        expect(methodCalls[0].method, 'checkWriteSettingsPermission');
+        // Permission.systemAlertWindow.statusがgrantedでない場合、
+        // checkWriteSettingsPermissionが呼ばれる
+        expect(methodCalls.any((call) => call.method == 'checkWriteSettingsPermission'), true);
       });
 
       test('requestWriteSettingsPermissionが正しくMethodChannelを呼び出す', () async {

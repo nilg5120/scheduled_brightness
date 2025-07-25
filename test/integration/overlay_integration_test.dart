@@ -12,7 +12,7 @@ void main() {
     setUp(() {
       methodCalls = [];
       
-      // MethodChannelをモック
+      // BrightnessServiceのMethodChannelをモック
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
         const MethodChannel('com.example.scheduled_brightness/brightness'),
@@ -35,12 +35,81 @@ void main() {
           }
         },
       );
+      
+      // shared_preferencesのMethodChannelをモック
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('plugins.flutter.io/shared_preferences'),
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'getAll':
+              return <String, Object>{}; // 空の設定を返す
+            case 'setString':
+            case 'setBool':
+            case 'setInt':
+            case 'setDouble':
+              return true;
+            default:
+              return null;
+          }
+        },
+      );
+      
+      // permission_handlerのMethodChannelをモック
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('flutter.baseflow.com/permissions/methods'),
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'checkPermissionStatus':
+              return 0; // PermissionStatus.denied
+            case 'requestPermissions':
+              return {0: 1}; // Permission.systemAlertWindow: PermissionStatus.granted
+            default:
+              return null;
+          }
+        },
+      );
+      
+      // PermissionServiceのMethodChannelをモック
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('com.example.scheduled_brightness/permission'),
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'checkWriteSettingsPermission':
+              return true;
+            case 'openWriteSettingsPermissionPage':
+              return null;
+            default:
+              return null;
+          }
+        },
+      );
     });
 
     tearDown(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
         const MethodChannel('com.example.scheduled_brightness/brightness'),
+        null,
+      );
+      
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('plugins.flutter.io/shared_preferences'),
+        null,
+      );
+      
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('flutter.baseflow.com/permissions/methods'),
+        null,
+      );
+      
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('com.example.scheduled_brightness/permission'),
         null,
       );
     });
