@@ -1,8 +1,21 @@
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import '../models/brightness_schedule.dart';
 
 // アラーム（スケジュールされた時刻に明るさを変更するトリガー）を管理するサービスクラス
 class AlarmService {
+  // ロガーの定義
+  static final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 8,
+      lineLength: 120,
+      colors: true,
+      printEmojis: true,
+      dateTimeFormat: DateTimeFormat.none,
+    ),
+  );
+
   // MethodChannelの定義
   static const platform = MethodChannel('com.example.scheduled_brightness/alarm');
 
@@ -22,7 +35,7 @@ class AlarmService {
       );
       return result ?? false;
     } catch (e) {
-      print('アラーム設定エラー: $e');
+      _logger.e('アラーム設定エラー: $e');
       return false;
     }
   }
@@ -36,7 +49,7 @@ class AlarmService {
       );
       return result ?? false;
     } catch (e) {
-      print('アラームキャンセルエラー: $e');
+      _logger.e('アラームキャンセルエラー: $e');
       return false;
     }
   }
@@ -60,7 +73,7 @@ class AlarmService {
       
       return allSuccess;
     } catch (e) {
-      print('アラーム再設定エラー: $e');
+      _logger.e('アラーム再設定エラー: $e');
       return false;
     }
   }
@@ -71,7 +84,7 @@ class AlarmService {
       final result = await platform.invokeMethod<bool>('testAlarm');
       return result ?? false;
     } catch (e) {
-      print('アラームテストエラー: $e');
+      _logger.e('アラームテストエラー: $e');
       return false;
     }
   }

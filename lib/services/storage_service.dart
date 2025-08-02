@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
 import '../models/brightness_schedule.dart';
 import '../models/app_settings.dart';
 
 // データの永続化を担当するサービスクラス
 class StorageService {
+  // ログ出力用のインスタンス
+  static final Logger _logger = Logger();
+  
   // SharedPreferencesのキー
   static const String _schedulesKey = 'brightness_schedules';
   static const String _settingsKey = 'app_settings';
@@ -31,7 +35,7 @@ class StorageService {
           .map((scheduleJson) => BrightnessSchedule.fromJson(scheduleJson))
           .toList();
     } catch (e) {
-      print('スケジュールの読み込みエラー: $e');
+      _logger.e('スケジュールの読み込みエラー', error: e);
       return [];
     }
   }
@@ -55,7 +59,7 @@ class StorageService {
       final settingsJson = jsonDecode(settingsString);
       return AppSettings.fromJson(settingsJson);
     } catch (e) {
-      print('設定の読み込みエラー: $e');
+      _logger.e('設定の読み込みエラー', error: e);
       return AppSettings();
     }
   }

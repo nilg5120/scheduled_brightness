@@ -35,7 +35,7 @@ class OverlayOpacitySlider extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -56,9 +56,9 @@ class OverlayOpacitySlider extends StatelessWidget {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: Theme.of(context).primaryColor,
-            inactiveTrackColor: Theme.of(context).primaryColor.withOpacity(0.3),
+            inactiveTrackColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
             thumbColor: Theme.of(context).primaryColor,
-            overlayColor: Theme.of(context).primaryColor.withOpacity(0.2),
+            overlayColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
             valueIndicatorColor: Theme.of(context).primaryColor,
             valueIndicatorTextStyle: const TextStyle(
               color: Colors.white,
@@ -111,7 +111,7 @@ class OverlayOpacitySlider extends StatelessWidget {
         onPressed: enabled ? () => onChanged(presetValue) : null,
         style: OutlinedButton.styleFrom(
           backgroundColor: isSelected 
-              ? Theme.of(context).primaryColor.withOpacity(0.1)
+              ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
               : null,
           side: BorderSide(
             color: isSelected 

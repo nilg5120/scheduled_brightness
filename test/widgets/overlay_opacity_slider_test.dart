@@ -239,7 +239,7 @@ void main() {
 
       // テーマから実際のプライマリカラーを取得
       final BuildContext context = tester.element(find.byType(OverlayOpacitySlider));
-      final expectedColor = Theme.of(context).primaryColor.withOpacity(0.1);
+      final expectedColor = Theme.of(context).primaryColor.withValues(alpha: 0.1);
 
       // パーセンテージ表示のコンテナの背景色をチェック
       final container = tester.widget<Container>(

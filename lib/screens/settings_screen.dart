@@ -170,7 +170,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 await Permission.systemAlertWindow.request().isGranted;
 
             if (!granted) {
-              if (context.mounted) {
+              if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('オーバーレイの権限が必要です。設定から許可してください。'),
@@ -183,7 +183,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // 権限がある場合のみ切り替え
             final success = await settingsProvider.toggleOverlay();
-            if (!success && context.mounted) {
+            if (!success && mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('オーバーレイの切り替えに失敗しました'),

@@ -59,6 +59,9 @@ dependencies:
   # アプリ情報取得用パッケージ
   package_info_plus: ^4.2.0
 
+  # ログ出力用パッケージ
+  logger: ^2.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,8 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:logger/logger.dart';
 
 // 権限管理を担当するサービスクラス
 class PermissionService {
+  // Loggerのインスタンス
+  static final Logger _logger = Logger();
+  
   // MethodChannelの定義
   static const platform = MethodChannel('com.example.scheduled_brightness/permission');
 
@@ -19,7 +23,7 @@ class PermissionService {
       final result = await platform.invokeMethod<bool>('checkWriteSettingsPermission');
       return result ?? false;
     } catch (e) {
-      print('権限確認エラー: $e');
+      _logger.e('権限確認エラー: $e');
       return false;
     }
   }
@@ -29,7 +33,7 @@ class PermissionService {
     try {
       await platform.invokeMethod('openWriteSettingsPermissionPage');
     } catch (e) {
-      print('権限リクエストエラー: $e');
+      _logger.e('権限リクエストエラー: $e');
     }
   }
 

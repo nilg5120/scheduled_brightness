@@ -54,11 +54,11 @@ class BrightnessSlider extends StatelessWidget {
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
             activeTrackColor: isAutoMode ? Colors.grey : null,
-            inactiveTrackColor: isAutoMode ? Colors.grey.withOpacity(0.3) : null,
+            inactiveTrackColor: isAutoMode ? Colors.grey.withValues(alpha: 0.3) : null,
             thumbColor: isAutoMode ? Colors.grey : null,
             overlayColor: isAutoMode
-                ? Colors.grey.withOpacity(0.2)
-                : Theme.of(context).primaryColor.withOpacity(0.2),
+                ? Colors.grey.withValues(alpha: 0.2)
+                : Theme.of(context).primaryColor.withValues(alpha: 0.2),
             valueIndicatorColor: isAutoMode ? Colors.grey : null,
           ),
           child: Slider(
