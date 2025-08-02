@@ -17,12 +17,12 @@ class ScheduleListItem extends StatelessWidget {
 
   // コンストラクタ
   const ScheduleListItem({
-    Key? key,
+    super.key,
     required this.schedule,
     required this.onEdit,
     required this.onDelete,
     required this.onToggleEnabled,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

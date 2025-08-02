@@ -9,7 +9,7 @@ import 'settings_screen.dart';
 
 // ホーム画面（スケジュール一覧）
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,8 @@ class HomeScreen extends StatelessWidget {
       // スケジュール追加ボタン
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addNewSchedule(context),
-        child: const Icon(Icons.add),
         tooltip: 'スケジュールを追加',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -242,8 +242,8 @@ class HomeScreen extends StatelessWidget {
                   .deleteSchedule(id);
               Navigator.pop(context);
             },
-            child: const Text('削除'),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('削除'),
           ),
         ],
       ),

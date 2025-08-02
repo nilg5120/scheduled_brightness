@@ -13,11 +13,11 @@ class BrightnessSlider extends StatelessWidget {
 
   // コンストラクタ
   const BrightnessSlider({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.isAutoMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

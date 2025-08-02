@@ -11,7 +11,7 @@ class ScheduleEditScreen extends StatefulWidget {
   final BrightnessSchedule? schedule;
 
   // コンストラクタ
-  const ScheduleEditScreen({Key? key, this.schedule}) : super(key: key);
+  const ScheduleEditScreen({super.key, this.schedule});
 
   @override
   State<ScheduleEditScreen> createState() => _ScheduleEditScreenState();
