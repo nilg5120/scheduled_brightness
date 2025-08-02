@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/overlay_opacity_slider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // 設定画面
 class SettingsScreen extends StatefulWidget {
@@ -164,8 +165,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           value: settingsProvider.isOverlayActive,
           onChanged: (value) async {
+            // オーバーレイ権限をチェック・要求
+            final granted = await Permission.systemAlertWindow.isGranted ||
+                await Permission.systemAlertWindow.request().isGranted;
+
+            if (!granted) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('オーバーレイの権限が必要です。設定から許可してください。'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+              }
+              return;
+            }
+
+            // 権限がある場合のみ切り替え
             final success = await settingsProvider.toggleOverlay();
-            if (!success && mounted) {
+            if (!success && context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('オーバーレイの切り替えに失敗しました'),
